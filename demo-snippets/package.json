@@ -1,6 +1,6 @@
 {
 	"name": "@nativescript-community/template-snippet",
-	"version": "3.0.1",
+	"version": "0.0.1",
 	"dependencies": {
 		"@akylas/nativescript-inapp-purchase": "file:../packages/inapp-purchase"
 	}
