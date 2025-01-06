@@ -1,0 +1,4 @@
+dependencies {
+    def androidBilling = project.hasProperty("androidBilling") ? project.androidBilling : "7.1.1"
+    implementation "com.android.billingclient:billing:$androidBilling"
+}
