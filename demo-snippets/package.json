@@ -1,0 +1,7 @@
+{
+	"name": "@nativescript-community/template-snippet",
+	"version": "3.0.1",
+	"dependencies": {
+		"@nativescript-community/inapp-purchase": "file:../packages/inapp-purchase"
+	}
+}

@@ -1,0 +1,9 @@
+{    
+    "extends": "./tools/tsconfig",
+    "compilerOptions": {
+        "paths": {
+            "@nativescript-community/inapp-purchase": ["src/inapp-purchase"],
+            "@nativescript-community/inapp-purchase/*": ["src/inapp-purchase/*"]
+       },
+    }
+}

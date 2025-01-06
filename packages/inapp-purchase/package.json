@@ -1,0 +1,44 @@
+{
+    "name": "@nativescript-community/inapp-purchase",
+    "version": "3.0.1",
+    "description": "Universal links (IOS) and App Links (Android) support for NativeScript.",
+    "main": "./index",
+    "typings": "./index-common.d.ts",
+    "scripts": {
+        "build": "npm run tsc && npm run readme",
+        "readme": "../../node_modules/.bin/readme generate -c ../../tools/readme/blueprint.json",
+        "tsc": "../../node_modules/.bin/cpy '**/*.d.ts' '../../packages/inapp-purchase' --parents --cwd=../../src/inapp-purchase && ../../node_modules/.bin/tsc -skipLibCheck -d",
+        "clean": "../../node_modules/.bin/rimraf ./*.d.ts ./*.js ./*.js.map"
+    },
+    "nativescript": {
+        "platforms": {
+            "android": "6.0.0",
+            "ios": "6.0.0"
+        }
+    },
+    "keywords": [
+        "NativeScript",
+        "JavaScript",
+        "Android",
+        "iOS",
+        "universal",
+        "link",
+        "deeplink",
+        "vue.js",
+        "preview|https://raw.githubusercontent.com/nativescript-community/inapp-purchase/master/images/demo-ios.gif|iOS Demo",
+        "preview|https://raw.githubusercontent.com/nativescript-community/inapp-purchase/master/images/demo-android.gif|Android Demo"
+    ],
+    "author": {
+        "name": "Dragos Sebestin"
+    },
+    "bugs": {
+        "url": "https://github.com/nativescript-community/inapp-purchase/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/nativescript-community/inapp-purchase"
+    },
+    "license": "Apache-2.0",
+    "readmeFilename": "README.md",
+    "gitHead": "5344b9c4aad6e73e9264ddc10bc6922cbabe16b5"
+}
