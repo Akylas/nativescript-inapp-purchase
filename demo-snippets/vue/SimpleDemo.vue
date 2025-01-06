@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { getUniversalLink, registerUniversalLinkCallback } from '@nativescript-community/inapp-purchase';
+import { getUniversalLink, registerUniversalLinkCallback } from '@akylas/nativescript-inapp-purchase';
 export default {
     async mounted() {
         registerUniversalLinkCallback((link) => {

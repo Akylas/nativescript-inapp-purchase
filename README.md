@@ -18,10 +18,10 @@
       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
-<h1 align="center">@nativescript-community/inapp-purchase</h1>
+<h1 align="center">@akylas/nativescript-inapp-purchase</h1>
 <p align="center">
-		<a href="https://npmcharts.com/compare/@nativescript-community/inapp-purchase?minimal=true"><img alt="Downloads per month" src="https://img.shields.io/npm/dm/@nativescript-community/inapp-purchase.svg" height="20"/></a>
-<a href="https://www.npmjs.com/package/@nativescript-community/inapp-purchase"><img alt="NPM Version" src="https://img.shields.io/npm/v/@nativescript-community/inapp-purchase.svg" height="20"/></a>
+		<a href="https://npmcharts.com/compare/@akylas/nativescript-inapp-purchase?minimal=true"><img alt="Downloads per month" src="https://img.shields.io/npm/dm/@akylas/nativescript-inapp-purchase.svg" height="20"/></a>
+<a href="https://www.npmjs.com/package/@akylas/nativescript-inapp-purchase"><img alt="NPM Version" src="https://img.shields.io/npm/v/@akylas/nativescript-inapp-purchase.svg" height="20"/></a>
 	</p>
 
 <p align="center">
@@ -103,7 +103,7 @@ function parseLink(link: string) {
 ## Installation
 Run the following command from the root of your project:
 
-`ns plugin add @nativescript-community/inapp-purchase`
+`ns plugin add @akylas/nativescript-inapp-purchase`
 
 
 [](#implementing-inapp-purchase)
@@ -195,7 +195,7 @@ Call the `registerUniversalLinkCallback` somewhere in the startup of your app. T
 
 ```js
 import { Component, OnInit } from "@angular/core";
-import { registerUniversalLinkCallback } from "@nativescript-community/inapp-purchase";
+import { registerUniversalLinkCallback } from "@akylas/nativescript-inapp-purchase";
 
 @Component({
   selector: "my-app",

@@ -115,7 +115,7 @@ Call the `registerUniversalLinkCallback` somewhere in the startup of your app. T
 
 ```js
 import { Component, OnInit } from "@angular/core";
-import { registerUniversalLinkCallback } from "@nativescript-community/inapp-purchase";
+import { registerUniversalLinkCallback } from "@akylas/nativescript-inapp-purchase";
 
 @Component({
   selector: "my-app",
