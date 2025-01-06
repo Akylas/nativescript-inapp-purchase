@@ -32,207 +32,175 @@
 <br />
 
 
-When a user clicks a link to a website, it opens in the default web browser (Safari/Chrome). Universal linking allows your app to open instead of the web browser.
-
-Apple calls this _Universal Links_ and Google calls it _App Links_, but they mean the same thing.
-
-| <img src="https://raw.githubusercontent.com/nativescript-community/inapp-purchase/master/images/demo-ios.gif" height="500" /> | <img src="https://raw.githubusercontent.com/nativescript-community/inapp-purchase/master/images/demo-android.gif" height="500" /> |
-| --- | ----------- |
-| iOS Demo | Android Demo |
 
 
-[](#migration-to-3x)
+[](#prerequisites)
 
-## Migration to 3.x
+## Prerequisites
 
-In version 3.0.0 the returned object is now simply the link as a `string`. It is not "parsed" anymore. The reason for that is that `url-parse` package used for this is pretty huge and not needed by most.
-You can still parse like so:
+Before you get started, review the following prerequisites:
+
+### iOS prerequisites
+
+To offer in app purchases for your iOS app. You will need to create items for the app on [AppStoreConnect.Apple.Com](https://appstoreconnect.apple.com).
+
+![In App Purchase Step One](https://raw.githubusercontent.com/NativeScript/payments/main/assets/payments/images/ios-payments1.png)
+
+On the form to create the in app purchase item, the `Product ID` is the value you will use to fetch your items for the user to purchase in your app.
+![Product ID Form Apple](https://raw.githubusercontent.com/NativeScript/payments/main/assets/payments/images/ios-payments2.png)
+
+Once you complete creating an item you will see a list of all items for the app listed on the AppStore Connect.
+![List of IAP Items](https://raw.githubusercontent.com/NativeScript/payments/main/assets/payments/images/ios-payments3.png)
+
+To test iOS purchases fully, you will need a real iOS device. You will also need a [test user in the sandbox environment](https://appstoreconnect.apple.com/access/testers) on your appstore account.
+
+![Sandbox Testers](https://raw.githubusercontent.com/NativeScript/payments/main/assets/payments/images/sandbox-testers.png)
+
+### Android prerequisites
+
+1. To offer in-app purchases for your Android app, you will need to upload at least ONE apk/aab to the [Google Play Console](https://play.google.com).
+
+2. Create in-app products on the console.
+![Create new in app products](https://raw.githubusercontent.com/NativeScript/payments/main/assets/payments/images/android-payments1.png)
+
+On the form to create your product, the `Product ID` is the value you will use to fetch your products for the user to purchase.
+
+#### Important note about Google items
+
+- Google does not like numeric values in the ID field. It seems to ignore the Sku when querying for your items and only returns one item instead of multiple values if the IDs contain numeric values.
+![Product ID Form](https://raw.githubusercontent.com/NativeScript/payments/main/assets/payments/images/android-payments2.png)
+
+- Google in app products will not work until Google has reviewed the app. They will appear in the list of products, but the API will error trying to purchase them. The title of the item when you call `fetchItems(['your.product.id']) should be suffixed with (in review) or something similar when returned at this point. You will not be able to finish the purchase flow until the review period has passed.
+
+![Active, in review](https://raw.githubusercontent.com/NativeScript/payments/main/assets/payments/images/android-active-inreview.png)
+
+To test Android purchases completely, you should use a real device with Google Play setup and logged into an account. You can use [test accounts
+for Google Play Billing](https://developer.android.com/google/play/billing/test) for the work flow. This will allow you to test the app in development properly. For more info: https://support.google.com/googleplay/android-developer/answer/6062777
+
+
+### Usage
+
+Below is the standard flow of the plugin's methods calls:
+
 ```typescript
-import * as urlparse from 'url-parse';
+import { BuyItemOptions, Item as InAppItem, InAppPurchase, PaymentEvent } from '@akylas/nativescript-inapp-purchase/index';
 
-function parseLink(link: string) {
-  const url = urlparse(link, true);
-  return {
-    href: url.href,
-    origin: url.origin
-    pathname: url.pathname,
-    query: url.query
-  }
-  
-}
+const inAppPurchase = new InAppPurchase()
+inAppPurchase.init();
+inappPurchase.on(PaymentEvent.EventName, (event: PaymentEvent.IEvent) => {...
+
+// fetchItems(['item.id', ...]) will query the store for the items requested.
+// Handle these items inside the PaymentEvent.Context.RETRIEVING_ITEMS event.
+inappPurchase.fetchItems(['item.id']);
+
+// buyItem('item.id') will start the purchase flow on Android & iOS.
+// Next handle the PaymentEvent.Context.PROCESSING_ORDER for SUCCESS or FAILURE.
+// If SUCCESS then you can call the last method to the `finalizeOrder(payload)` method.
+inappPurchase.buyItem('item.id');
+
+// finalizeOrder(payload) will complete the purchase flow.
+// The payload argument here is provided in the PaymentEvent.Context.PROCESSING_ORDER - SUCCESS event (see below example for detailed usage).
+inappPurchase.finalizeOrder(payload)
+
+// at this point you would process the order with your backend given the receiptToken from the purchase flow
 ```
 
+### In-App Purchase example
 
-[](#table-of-contents)
+```typescript
+import { BuyItemOptions, Item as InAppItem, InAppPurchase, PaymentEvent } from '@akylas/nativescript-inapp-purchase/index';
+const inAppPurchase = new InAppPurchase()
+export class SomeViewModel {
+  private item: Item;
 
-## Table of Contents
+  pageLoaded() {
 
-* [Migration to 3.x](#migration-to-3x)
-* [Installation](#installation)
-* [Implementing Universal Links](#implementing-universal-links)
-	* [iOS](#ios)
-	* [Android](#android)
-* [Usage](#usage)
-* [Debugging](#debugging)
-	* [iOS](#ios-1)
-	* [Android](#android-1)
-* [Demos and Development](#demos-and-development)
-	* [Repo Setup](#repo-setup)
-	* [Build](#build)
-	* [Demos](#demos)
-* [Contributing](#contributing)
-	* [Update repo ](#update-repo-)
-	* [Update readme ](#update-readme-)
-	* [Update doc ](#update-doc-)
-	* [Publish](#publish)
-	* [modifying submodules](#modifying-submodules)
-* [Questions](#questions)
-
-
-[](#installation)
-
-## Installation
-Run the following command from the root of your project:
-
-`ns plugin add @akylas/nativescript-inapp-purchase`
-
-
-[](#implementing-universal-links)
-
-## Implementing Universal Links
-
-Both iOS (9.0 and newer) and Android (all versions) provide good APIs for universal linking.
-
-### iOS
-
-Apple introduced a new deep linking API in iOS 9.0 called “Universal Links”. It provides a better user experience than the hacky deep linking options that existed in iOS 8.0 and below.
-
-First step is to add a file to the root of your website called `apple-app-site-association`. This is a JSON file and it looks like this:
-
-```javascript
-{
-    "applinks": {
-        "apps": [],
-        "details": [
-            {
-                "appID": "TEAM_ID.BUNDLE_ID", // ex: "9JA89QQLNQ.com.apple.wwdc"
-                "paths": [ "/blog/*"]
+    // Subscribe to the RxJS Observable
+    // You do not have to handle all of the events
+    // RETRIEVING_ITEMS && PROCESSING_ORDER are the ones you'll want to use to handle the purchase flow
+    inAppPurchase.on((event: PaymentEvent.Type) => {
+      switch (event.context) {
+        case PaymentEvent.Context.CONNECTING_STORE:
+          console.log('Store Status: ' + event.result);
+          if (event.result === PaymentEvent.Result.SUCCESS) {
+            const canPay = inAppPurchase.canMakePayments();
+            if (canPay) {
+              // pass in your product IDs here that you want to query for
+              inAppPurchase.fetchItems(['io.nstudio.iapdemo.coinsfive', 'io.nstudio.iapdemo.coinsone', 'io.nstudio.iapdemo.coinsonethousand']);
             }
-        ]
-    }
-}
-```
-
-- This file will be downloaded automatically by every single user that installs or upgrades your iOS app.
-- It **_MUST_** be served over HTTPS with a valid SSL certificate. If you need to test this, I recommend using https://ngrok.io.
-- This file is only fetched once when the user first installs or upgrades the app. It must live on your website before your app is released. This also means that you can’t add new deep linking url patterns to your app until you push out a new app update to force users to refresh the file.
-- I suggest using this [Apple App Site Association (AASA) Validator](https://branch.io/resources/aasa-validator/) to confirm your `apple-app-site-association` is correct.
-
-Check out [Apples' docs](https://developer.apple.com/library/archive/documentation/General/Conceptual/AppSearch/UniversalLinks.html#//apple_ref/doc/uid/TP40016308-CH12-SW2) for more info.
-
-Next, you need to add the Associated Domains to your IOS project, either using XCode or manually adding the following code to your `App_Resources/IOS/app.entitlements` file. Please note the `applinks:` prefix, it won't work without it.
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-  <dict>
-    <key>com.apple.developer.associated-domains</key>
-    <array>
-      <string>applinks:www.example.com</string>
-    </array>
-  </dict>
-</plist>
-```
-
-### Android
-
-In Android, universal linking is implemented using Intent Filters. By adding a BROWSABLE intent filter, you are saying that your app can be started by a user clicking on a website url.
-
-You don't need any server side changes for Android, only modify your app to add the Intent Filter.
-Add this code to your `App_Resources/Android/src/main/AndroidManifest.xml` file:
-
-```xml
-<activity
-    android:name="com.tns.NativeScriptActivity"
-    android:label="@string/title_activity_kimera" >
-
-    <!-- Add this new section to your Activity -->
-    <intent-filter>
-        <action android:name="android.intent.action.VIEW" />
-        <category android:name="android.intent.category.DEFAULT" />
-        <category android:name="android.intent.category.BROWSABLE" />
-
-        <!-- Handle urls starting with "https://www.example.com/blog" -->
-        <data android:scheme="https"
-              android:host="www.example.com"
-              android:pathPrefix="/blog" />
-    </intent-filter>
-</activity>
-```
-
-
-[](#usage)
-
-## Usage
-
-Call the `registerUniversalLinkCallback` somewhere in the startup of your app. This Angular example puts it in the AppComponent's ngOnInit method to provide a callback method which will receive an Universal Link object every time your app is opened by a website link:
-
-```js
-import { Component, OnInit } from "@angular/core";
-import { registerUniversalLinkCallback } from "@akylas/nativescript-inapp-purchase";
-
-@Component({
-  selector: "my-app",
-  template: "<page-router-outlet></page-router-outlet>"
-})
-export class AppComponent {
-  constructor() {}
-
-  ngOnInit() {
-    registerUniversalLinkCallback(ul => {
-      // use the router to navigate to the screen
+          }
+          break;
+        case PaymentEvent.Context.RETRIEVING_ITEMS:
+          if (event.result === PaymentEvent.Result.SUCCESS) {
+            // if you passed multiple items you will need to handle accordingly for your app
+            this.item = event.payload;
+          }
+          break;
+        case PaymentEvent.Context.PROCESSING_ORDER:
+          if (event.result === PaymentEvent.Result.FAILURE) {
+            console.log(`🛑 Payment Failure - ${event.payload.description} 🛑`);
+            // handle the failure of the purchase
+          } else if (event.result === PaymentEvent.Result.SUCCESS) {
+            // handle the successful purchase
+            console.log('🟢 Payment Success 🟢');
+            console.log(`Order Date: ${event.payload.orderDate}`);
+            console.log(`Receipt Token: ${event.payload.receiptToken}`);
+            inAppPurchase.finalizeOrder(event.payload);
+          }
+          break;
+        case PaymentEvent.Context.FINALIZING_ORDER:
+          if (event.result === PaymentEvent.Result.SUCCESS) {
+            console.log('Order Finalized');
+          }
+          break;
+        case PaymentEvent.Context.RESTORING_ORDERS:
+          console.log(event);
+          break;
+        default:
+          console.log(`Invalid EventContext: ${event}`);
+          break;
+      }
     });
+
+    // This initializes the internal payment system for the plugin
+    inAppPurchase.init();
+  }
+
+  buttonTap() {
+    const opts: BuyItemOptions = {
+      android: {
+      },
+      ios: {
+        quantity: 1,
+        simulatesAskToBuyInSandbox: true,
+      },
+    };
+
+    // This method will kick off the platform purchase flow
+    // We are passing the item and an optional object with some configuration
+    inAppPurchase.buyItem(this.item, opts);
   }
 }
 ```
 
-The universal link object has the following structure:
 
-```JSON
-{
-  "href": "https://www.example.com/blog?title=welcome",
-  "origin": "https://www.example.com",
-  "pathname": "/blog",
-  "query": "?title=welcome"
-}
-```
+[](#api)
 
-There is also a `getUniversalLink()` method that will return the last universal link which opened the app. This is useful in scenarios where your app is protected by a login screen. Check if the user is authenticated and then navigate to the desired path.
+## API
 
-```js
-import { getUniversalLink } from "nativescript-plugin-inapp-purchase";
+- `init()` Sets up the internal system of the plugin.
 
-const ul = getUniversalLink();
-```
 
-[](#debugging)
+| Method | Description
+|:-------|:-----------
+| `fetchItems(itemIds: Array<string>)`               | Queries the store for the items requested. You should handle these items inside the `PaymentEvent.Context.RETRIEVING_ITEMS` event.                                                                     |
+| `buyItem(item: Item, options?: BuyItemOptions)`    | Starts the purchase flow on Android & iOS and emits `PaymentEvent.Context.PROCESSING_ORDER` with `SUCCESS` or `FAILURE`. If SUCCESS then you can call the last method to the `finalizeOrder(payload)`. |
+| `fetchSubscriptions(itemIds: Array<string>)`       | Queries the store for the subscriptions offered by the app. You should handle these subscriptions inside the `PaymentEvent.Context.RETRIEVING_ITEMS` event.                                            |
+| `startSubscription(item: Item, userData?: string)` | `Android only`. Lanches the billing flow by presenting the Google Store subscription UI interface.                                                                                                     |
+| `restoreOrders(skuType?: string)`                  | Returns the purchase made by the user for each product. You call this method to install purchases on additional devices or restore purchases for an application that the user deleted and reinstalled. |
+| `canMakePayments()`                                | Returns `true` or `false` indicating whether the billing service is available and is setup successfully.                                                                                               |
+| `tearDown()`                                       | Closes the connection to the billing service to free up resources.                                                                                                                                     |
 
-## Debugging
-
-You can simulate universal links to debug within your app
-
-### iOS
-
-```shell
-xcrun simctl openurl booted "*your link*"
-```
-
-### Android
-
-```shell
-adb shell am start -d "*your link*"
-``````
 
 
 [](#demos-and-development)
