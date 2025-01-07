@@ -1,7 +1,7 @@
 {
 	"name": "@nativescript-community/template-snippet",
 	"version": "0.0.1",
-    "private": true,
+	"private": true,
 	"dependencies": {
 		"@akylas/nativescript-inapp-purchase": "file:../packages/inapp-purchase"
 	}

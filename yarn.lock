@@ -6,9 +6,9 @@ __metadata:
   cacheKey: 10
 
 "@akylas/nativescript-inapp-purchase@file:../packages/inapp-purchase::locator=%40nativescript-community%2Ftemplate-snippet%40workspace%3Ademo-snippets":
-  version: 3.0.1
-  resolution: "@akylas/nativescript-inapp-purchase@file:../packages/inapp-purchase#../packages/inapp-purchase::hash=f31239&locator=%40nativescript-community%2Ftemplate-snippet%40workspace%3Ademo-snippets"
-  checksum: 51dbcfeb5ac7501b2039684862ce910a70f85e39b8049ef2e528039d78c12a5324720e9cc6c6bec44a425ce9379cd2a7ac78072f49d03ef894df01d590c9208e
+  version: 0.0.3
+  resolution: "@akylas/nativescript-inapp-purchase@file:../packages/inapp-purchase#../packages/inapp-purchase::hash=7f2d93&locator=%40nativescript-community%2Ftemplate-snippet%40workspace%3Ademo-snippets"
+  checksum: b7c92ea2e83ac5255a56c6f3c955ee5e761837ac0dda1660879703565331bf2e32662bf0ab466d4183f53d5203f5223d8904c5181cbca77d088f9e0dce752e3e
   languageName: node
   linkType: hard
 
@@ -13664,7 +13664,7 @@ __metadata:
 
 "typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>":
   version: 5.6.3
-  resolution: "typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>::version=5.6.3&hash=e012d7"
+  resolution: "typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>::version=5.6.3&hash=29ae49"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
@@ -13684,7 +13684,7 @@ __metadata:
 
 "typescript@patch:typescript@npm%3A~5.4.5#optional!builtin<compat/typescript>":
   version: 5.4.5
-  resolution: "typescript@patch:typescript@npm%3A5.4.5#optional!builtin<compat/typescript>::version=5.4.5&hash=e012d7"
+  resolution: "typescript@patch:typescript@npm%3A5.4.5#optional!builtin<compat/typescript>::version=5.4.5&hash=29ae49"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
