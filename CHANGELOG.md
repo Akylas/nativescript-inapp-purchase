@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.4](https://github.com/nativescript-community/inapp-purchase/compare/v0.0.3...v0.0.4) (2025-01-07)
+
+### Bug Fixes
+
+* typings fix ([1c1ecf4](https://github.com/nativescript-community/inapp-purchase/commit/1c1ecf4db7266f0fbeab0ebb1520803c1a134a84))
+
 ## [0.0.3](https://github.com/nativescript-community/inapp-purchase/compare/v0.0.2...v0.0.3) (2025-01-06)
 
 ### Bug Fixes

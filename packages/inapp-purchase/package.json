@@ -1,6 +1,6 @@
 {
     "name": "@akylas/nativescript-inapp-purchase",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "Universal links (IOS) and App Links (Android) support for NativeScript.",
     "main": "./index",
     "typings": "./index.d.ts",
